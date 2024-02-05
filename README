@@ -1,0 +1,41 @@
+ncremap -d /global/cfs/cdirs/fanssie/users/hoffman2/RSL/DSL_CMIP6/tgrid0.nc zos_Omon_BCC-CSM2-MR_ssp585_r1i1p1f1_gn_201501-210012.nc.2100-2015_diff.nc ../diff-remapped/zos_Omon_BCC-CSM2-MR_ssp585_r1i1p1f1_gn_201501-210012.nc.2100-2015_diff_Gauss.nc
+
+
+SLM changes
+
+diff --git a/sl_model_mod.f90 b/sl_model_mod.f90
+index 615eed6..d3d795f 100644
+--- a/sl_model_mod.f90
++++ b/sl_model_mod.f90
+@@ -1087,7 +1088,7 @@ module sl_model_mod
+              if (icexy(i, j, nfiles) < epsilon(0.0)) then
+                 beta(i,j) = 1
+              else
+-                beta(i,j) = 0
++                beta(i,j) = 1
+              endif
+          enddo
+       enddo
+
+
+
+Running SLM with DSL change input
+
+cd SLM/
+cp -R BCC CESM
+cd CESM/
+rm OUTPUT_SLM/*
+cp ../../diff-remapped/zos_Omon_CESM2_ssp585_r1i1p1f1_gn_201501-206412.nc.2100-2015_diff_Gauss.nc grdice1.nc
+ncrename -v zos,grdice grdice1.nc
+ncatted -a _FillValue,,o,f,0.0 grdice1.nc
+ncatted -a _FillValue,,d,, grdice1.nc
+rm slurm-190*
+sbatch batch-script
+
+ncdiff tgrid0.nc tgrid1.nc tgrid-diff.nc
+
+
+
+
+
+conda create -n esgf-pyclient-plus2 -c conda-forge esgf-pyclient ipython numpy xarray matplotlib cartopy MyProxyClient nco ncview netcdf4 h5netcdf libnetcdf dask cdo
